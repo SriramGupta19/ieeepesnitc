@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEEE PES SBC Event Report Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background: linear-gradient(to right, #e9f5ff, #f7fbff);
+        }
+        h1 {
+            text-align: center;
+            color: #004b87;
+            margin-bottom: 30px;
+        }
+        form {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: auto;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 12px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #0073c2;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            margin-top: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #039900;
+        }
+        #report {
+            margin-top: 40px;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 40px auto 0;
+        }
+        #report h2 {
+            text-align: center;
+            color: #003366;
+            margin-bottom: 20px;
+        }
+        .serial-number-container {
+            text-align: left;
+            margin: 10px 0 5px 15px;
+            font-weight: bold;
+            color: #666666;
+        }
+        .event-type-container {
+            text-align: left;
+            margin: 5px 0 15px 15px;
+            color: #004080;
+            font-size: 14px;
+        }
+        .report-title {
+            font-weight: bold;
+            color: #004080;
+        }
+        .report-section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #004080;
+            margin-bottom: 6px;
+        }
+        .report-section p {
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            text-align: justify;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .logo-container img {
+            max-width: 100%;
+            height: auto;
+        }
+        .serial-inputs {
+            display: flex;
+            gap: 10px;
+        }
+        .serial-inputs input {
+            flex: 1;
+        }
+        .report-maker-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .report-maker-name {
+            flex: 2;
+        }
+        .report-maker-designation {
+            flex: 1;
+        }
+        .report-signature {
+            text-align: left;
+            margin-top: 30px;
+            font-style: italic;
+            color: #333;
+        }
+        #imagePreview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .preview-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .image-container {
+            position: relative;
+            display: inline-block;
+        }
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(255, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .image-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .image-wrapper {
+            width: 48%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="logo3.png" alt="IEEE PES SBC Logo" width="610" height="24">
+    </div>
+    <h1>IEEE PES SBC Event Report Generator</h1>
+    <form id="reportForm">
+        <label for="year">Year:</label>
+        <select id="year" required>
+            <option value="">Select Year</option>
+            <option value="2025" selected>2025</option>
+            <option value="2026">2026</option>
+        </select>
+
+        <label for="serial">Event Number (XX):</label>
+        <input type="text" id="serial" pattern="[0-9]{2}" placeholder="Enter 2-digit number" required>
+
+        <label for="eventType">Event Type:</label>
+        <select id="eventType" required>
+            <option value="">Select Event Type</option>
+            <option value="Workshop">Workshop</option>
+            <option value="Webinar">Webinar</option>
+            <option value="Guest Lecture">Guest Lecture</option>
+            <option value="Competition">Competition</option>
+            <option value="Conference">Conference</option>
+            <option value="Technical Talk">Technical Talk</option>
+            <option value="Hands-on Session">Hands-on Session</option>
+            <option value="Industrial Visit">Industrial Visit</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <label for="title">Event Title:</label>
+        <input type="text" id="title" required>
+
+        <label for="date">Event Date:</label>
+        <input type="text" id="date" placeholder="e.g., 17 June 2025" required>
+
+        <label for="venue">Venue / Platform:</label>
+        <input type="text" id="venue" required>
+
+        <label for="organisers">Organised by:</label>
+        <input type="text" id="organisers" value="IEEE PES SBC NITC">
+
+        <label for="description">Event Description:</label>
+        <textarea id="description" rows="5" required></textarea>
+
+        <label for="speaker">Speaker(s):</label>
+        <textarea id="speaker" rows="2"></textarea>
+
+        <label for="participants">Number of Participants:</label>
+        <input type="text" id="participants" required>
+
+        <label for="outcomes">Key Outcomes / Highlights:</label>
+        <textarea id="outcomes" rows="4"></textarea>
+
+        <label for="photos">Google Drive Link (Photos, etc.):</label>
+        <input type="url" id="photos">
+
+        <label for="eventImages">Event Images (Upload multiple images):</label>
+        <input type="file" id="eventImages" accept="image/*" multiple>
+        <div id="imagePreview"></div>
+
+        <div class="report-maker-container">
+            <div class="report-maker-name">
+                <label for="reportMakerName">Report Made By:</label>
+                <input type="text" id="reportMakerName" placeholder="Your Name" required>
+            </div>
+            <div class="report-maker-designation">
+                <label for="reportMakerDesignation">Designation:</label>
+                <select id="reportMakerDesignation" required>
+                    <option value="">Select</option>
+                    <option value="Chairperson">Chairperson</option>
+                    <option value="Vice Chairperson">Vice Chairperson</option>
+                    <option value="Secretary">Secretary</option>
+                    <option value="Joint Secretary">Joint Secretary</option>
+                    <option value="Treasurer">Treasurer</option>
+                    <option value="Executive Member">Executive Member</option>
+                    <option value="Volunteer">Volunteer</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="button" onclick="generateReport()">Generate Report</button>
+        <button type="button" onclick="downloadPDF()">Download PDF</button>
+        <div style="margin-top: 10px; font-size: 14px; color: #ff0202; font-style: italic;">
+            Note: First click "Generate Report" to preview, then click "Download PDF"
+        </div>
+    </form>
+
+    <div id="report"></div>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+        let generatedHTML = '';
+        let uploadedImages = [];
+
+        // Handle image upload and preview
+        document.getElementById('eventImages').addEventListener('change', function(event) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById('imagePreview');
+            previewContainer.innerHTML = '';
+            uploadedImages = [];
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.match('image.*')) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const imageContainer = document.createElement('div');
+                        imageContainer.className = 'image-container';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'preview-image';
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-image';
+                        removeBtn.innerHTML = '×';
+                        removeBtn.onclick = function() {
+                            imageContainer.remove();
+                            // Remove from uploadedImages array
+                            const index = uploadedImages.findIndex(item => item.src === e.target.result);
+                            if (index !== -1) {
+                                uploadedImages.splice(index, 1);
+                            }
+                        };
+                        
+                        imageContainer.appendChild(img);
+                        imageContainer.appendChild(removeBtn);
+                        previewContainer.appendChild(imageContainer);
+                        
+                        // Store the image data for PDF generation
+                        uploadedImages.push({
+                            src: e.target.result,
+                            file: file
+                        });
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
+
+        function generateReport() {
+            const year = document.getElementById('year').value;
+            const serial = document.getElementById('serial').value;
+            const eventType = document.getElementById('eventType').value;
+            const title = document.getElementById('title').value;
+            const date = document.getElementById('date').value;
+            const venue = document.getElementById('venue').value;
+            const organisers = document.getElementById('organisers').value;
+            const description = document.getElementById('description').value;
+            const speaker = document.getElementById('speaker').value;
+            const participants = document.getElementById('participants').value;
+            const outcomes = document.getElementById('outcomes').value;
+            const photos = document.getElementById('photos').value;
+            const reportMakerName = document.getElementById('reportMakerName').value;
+            const reportMakerDesignation = document.getElementById('reportMakerDesignation').value;
+
+            const serialNumber = `NITC/IEEE/PES/${year}/EREP/${serial}`;
+
+            // Generate HTML for image preview in the report
+            let imagesHTML = '';
+            if (uploadedImages.length > 0) {
+                imagesHTML = '<div class="report-section"><div class="section-title">Event Images:</div>';
+                
+                // Group images in pairs
+                for (let i = 0; i < uploadedImages.length; i += 2) {
+                    imagesHTML += '<div class="image-row">';
+                    
+                    // First image in row
+                    imagesHTML += `<div class="image-wrapper"><img src="${uploadedImages[i].src}" style="max-width: 100%; height: auto; border: 1px solid #ddd;"></div>`;
+                    
+                    // Second image in row if exists
+                    if (i + 1 < uploadedImages.length) {
+                        imagesHTML += `<div class="image-wrapper"><img src="${uploadedImages[i+1].src}" style="max-width: 100%; height: auto; border: 1px solid #ddd;"></div>`;
+                    } else {
+                        imagesHTML += '<div class="image-wrapper"></div>'; // Empty div to maintain layout
+                    }
+                    
+                    imagesHTML += '</div>'; // Close row
+                }
+                
+                imagesHTML += '</div>'; // Close report-section
+            }
+
+            generatedHTML = `
+                <div class="serial-number-container">${serialNumber}</div>
+                <div class="event-type-container">Event Type: <strong>${eventType}</strong></div>
+                <h2>Event Report</h2>
+                <div class="report-section">
+                    <div class="section-title">Event Title:</div>
+                    <p>${title}</p>
+                </div>
+                <div class="report-section">
+                    <div class="section-title">Event Date:</div>
+                    <p>${date}</p>
+                </div>
+                <div class="report-section">
+                    <div class="section-title">Venue / Platform:</div>
+                    <p>${venue}</p>
+                </div>
+                <div class="report-section">
+                    <div class="section-title">Organised by:</div>
+                    <p>${organisers}</p>
+                </div>
+                <div class="report-section">
+                    <div class="section-title">Event Description:</div>
+                    <p>${description}</p>
+                </div>
+                <div class="report-section">
+                    <div class="section-title">Speaker(s):</div>
+                    <p>${speaker || 'N/A'}</p>
+                </div>
+                <div class="report-section">
+                    <div class="section-title">Number of Participants:</div>
+                    <p>${participants}</p>
+                </div>
+                <div class="report-section">
+                    <div class="section-title">Key Outcomes / Highlights:</div>
+                    <p>${outcomes || 'N/A'}</p>
+                </div>
+                <div class="report-section">
+                    <div class="section-title">Google Drive Link (Photos, etc.):</div>
+                    <p><a href="${photos}" target="_blank">${photos || 'N/A'}</a></p>
+                </div>
+                ${imagesHTML}
+                <hr>
+                <div class="report-signature">
+                    <p>Report prepared by:</p>
+                    <p><strong>${reportMakerName}</strong></p>
+                    <p>${reportMakerDesignation}</p>
+                    <p>IEEE PES SBC NITC</p>
+                </div>
+                <p style="text-align:center; font-style: italic; color: #666;">IEEE Power & Energy Society, Student Branch Chapter, NIT Calicut</p>
+            `;
+
+            document.getElementById('report').innerHTML = generatedHTML;
+        }
+
+        function downloadPDF() {
+            if (!document.getElementById('report').innerHTML.trim()) {
+                alert("Please generate the report first.");
+                return;
+            }
+
+            const year = document.getElementById('year').value;
+            const serial = document.getElementById('serial').value;
+            const eventType = document.getElementById('eventType').value;
+            const reportMakerName = document.getElementById('reportMakerName').value;
+            const reportMakerDesignation = document.getElementById('reportMakerDesignation').value;
+            const serialNumber = `NITC/IEEE/PES/${year}/EREP/${serial}`;
+
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 15;
+            const lineHeight = 7;
+            let y = 20;
+
+            // Function to add footer to current page
+            const addFooter = () => {
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'italic');
+                pdf.setTextColor(102, 102, 102);
+                pdf.text("IEEE Power & Energy Society, Student Branch Chapter, NIT Calicut", 
+                        pageWidth / 2, pageHeight - 10, 
+                        { align: 'center' });
+                // Reset all text properties after footer
+                pdf.setFontSize(11);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setTextColor(0, 0, 0);
+            };
+
+            // Add logo (210×24 mm dimensions, no margins)
+            y += lineHeight * 0.8;
+            const logoUrl = 'logo3.png';
+            pdf.addImage(logoUrl, 'PNG', 0, 0, 210, 24);
+            y += 15; // Move content down by the height of the logo
+
+            // Add serial number
+            pdf.setFontSize(11);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor(102, 102, 102); // Grey color
+            pdf.text(serialNumber, margin, y); // Left-aligned
+            y += lineHeight * 1.2;
+
+            // Add event type (with only label bold)
+            pdf.setFontSize(12);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor(0, 64, 128); // Blue color
+            pdf.text("Event Type: ", margin, y);
+            const labelWidth = pdf.getStringUnitWidth("Event Type:  ") * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(eventType, margin + labelWidth, y);
+            y += lineHeight * 1.2;
+
+            // Set initial styles
+            pdf.setFont('helvetica');
+            pdf.setTextColor(0, 0, 0);
+            pdf.setFontSize(11);
+            
+            y += lineHeight * 0.8;
+            // Add title (centered, bold, and colored)
+            pdf.setFontSize(16);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor(0, 64, 128);
+            pdf.text("Event Report", pageWidth / 2, y, { align: 'center' });
+            y += lineHeight * 1.6;
+
+            // Get all report sections except the images section (we'll handle that last)
+            const sections = Array.from(document.querySelectorAll('.report-section')).filter(section => 
+                !section.querySelector('.image-row')
+            );
+            
+            // Process all regular sections first
+            sections.forEach(section => {
+                const title = section.querySelector('.section-title').textContent;
+                const content = section.querySelector('p') ? section.querySelector('p').textContent : '';
+                
+                // Add section title (left-aligned)
+                pdf.setFontSize(12);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(0, 64, 128);
+                pdf.text(title, margin, y);
+                y += lineHeight;
+                
+                // Handle regular text content
+                if (content) {
+                    pdf.setFontSize(11);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setTextColor(0, 0, 0);
+                    
+                    // Split content into lines that fit the page width
+                    const lines = pdf.splitTextToSize(content, pageWidth - 2*margin);
+                    
+                    // Add each line with page break check
+                    lines.forEach(line => {
+                        if (y > pageHeight - 25) {
+                            addFooter();
+                            pdf.addPage();
+                            y = 20;
+                            pdf.addImage(logoUrl, 'PNG', 0, 0, 210, 24);
+                            y += 24;
+                            pdf.setFontSize(11);
+                            pdf.setFont('helvetica', 'normal');
+                            pdf.setTextColor(0, 0, 0);
+                        }
+                        pdf.text(line, margin, y, {
+                            maxWidth: pageWidth - 2*margin,
+                            align: 'justify'
+                        });
+                        y += lineHeight;
+                    });
+                }
+                
+                y += lineHeight * 0.5;
+            });
+
+            // Now handle the images section (if it exists)
+            const imagesSection = document.querySelector('.report-section .image-row');
+            if (imagesSection) {
+                const imageRows = document.querySelectorAll('.image-row');
+                const availableWidth = (pageWidth - 2*margin - 10) / 2; // 10 for gap between images
+                                
+                // Check if we need a new page before adding the images section title
+                if (y > pageHeight - 25 - 50) { // 50 is estimated space for at least one image row
+                    addFooter();
+                    pdf.addPage();
+                    y = 20;
+                    pdf.addImage(logoUrl, 'PNG', 0, 0, 210, 24);
+                    y += 24;
+                }
+                pdf.setFontSize(12);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(0, 64, 128);
+                pdf.text("Event Images:", margin, y);
+                y += lineHeight;
+                
+                // Process each row of images
+                imageRows.forEach(row => {
+                    const images = row.querySelectorAll('img');
+                    
+                    // Check if we need a new page before adding images
+                    if (y > pageHeight - 25 - 50) { // 50 is estimated space needed for images
+                        addFooter();
+                        pdf.addPage();
+                        y = 20;
+                        pdf.addImage(logoUrl, 'PNG', 0, 0, 210, 24);
+                        y += 24;
+                    }
+                    
+                    // Calculate max height in this row to position next row correctly
+                    let maxHeightInRow = 0;
+                    
+                    // Process each image in the row
+                    images.forEach((img, index) => {
+                        try {
+                            const imgWidth = availableWidth;
+                            const imgHeight = (img.naturalHeight / img.naturalWidth) * imgWidth;
+                            
+                            // Track the tallest image in this row
+                            if (imgHeight > maxHeightInRow) {
+                                maxHeightInRow = imgHeight;
+                            }
+                            
+                            const xPos = margin + (index * (availableWidth + 10));
+                            pdf.addImage(img.src, 'JPEG', xPos, y, imgWidth, imgHeight);
+                        } catch (e) {
+                            console.error("Error adding image:", e);
+                            pdf.text("[Image could not be loaded]", margin + (index * (availableWidth + 10)), y + 10);
+                        }
+                    });
+                    
+                    // Move y position down by the height of the tallest image in the row plus some padding
+                    y += maxHeightInRow + 10;
+                });
+            }
+
+            pdf.setDrawColor(200, 200, 200); // Light gray color for the line
+            pdf.setLineWidth(0.5); // Line thickness
+            pdf.line(margin, y, pageWidth - margin, y); // Draw from left margin to right margin
+            y += lineHeight * 0.8; // Add some space after the line
+
+            // Add report maker information
+            pdf.setFontSize(11);
+            pdf.setFont('helvetica', 'italic','bold');
+            pdf.setTextColor(0, 64, 128);
+            pdf.text("Report prepared by:", margin, y);
+            y += lineHeight;
+            
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(reportMakerName, margin, y);
+            y += lineHeight*0.8;
+            
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(reportMakerDesignation, margin, y);
+            y += lineHeight*0.8;
+
+            // Add footer to the last page
+            addFooter();
+
+            pdf.save(`IEEE_PES_Event_Report_${year}_${serial}.pdf`);
+        }
+    </script>
+</body>
+</html>
