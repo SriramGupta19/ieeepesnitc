@@ -601,9 +601,8 @@
                 pdf.addPage();
                 y = 20;
                 pdf.addImage(logoUrl, 'PNG', 0, 0, 210, 24);
-                y += 24;
+                y += 14;
             }
-            y += lineHeight * 2;
             pdf.setDrawColor(200, 200, 200); // Light gray color for the line
             pdf.setLineWidth(0.5); // Line thickness
             pdf.line(margin, y, pageWidth - margin, y); // Draw from left margin to right margin
