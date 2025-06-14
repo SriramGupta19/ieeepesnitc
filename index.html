@@ -540,7 +540,7 @@
             const imagesSection = document.querySelector('.report-section .image-row');
             if (imagesSection) {
                 const imageRows = document.querySelectorAll('.image-row');
-                const availableWidth = (pageWidth - 2*margin - 10-5) / 2; // 10 for gap between images
+                const availableWidth = (pageWidth - 2*margin - 10) / 2; // 10 for gap between images
                                 
                 // Check if we need a new page before adding the images section title
                 if (y > pageHeight - 25 - 50) { // 50 is estimated space for at least one image row
@@ -596,7 +596,7 @@
                 });
             }
 
-            if (y > pageHeight - 25 - (lineHeight * 4)) { // 4 lines of content
+            if (y > pageHeight - 25 - (lineHeight * 1)) { // 4 lines of content
                 addFooter();
                 pdf.addPage();
                 y = 20;
@@ -615,13 +615,18 @@
             pdf.text("Report prepared by:", margin, y);
             y += lineHeight;
             
-            pdf.setFont('helvetica', 'normal');
-            pdf.text(reportMakerName, margin, y);
-            y += lineHeight*0.8;
+            // Combine name and designation with a comma separator
+            const reportMakerInfo = `${reportMakerName}, ${reportMakerDesignation}`;
+            
+            pdf.setFontSize(11);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor(51, 51, 51);
+            pdf.text("Report prepared by:", margin, y);
+            y += lineHeight;
             
             pdf.setFont('helvetica', 'normal');
-            pdf.text(reportMakerDesignation, margin, y);
-            y += lineHeight*3;
+            pdf.text(reportMakerInfo, margin, y);  // This puts both name and designation on one line
+            y += lineHeight;
 
             // Add footer to the last page
             addFooter();
