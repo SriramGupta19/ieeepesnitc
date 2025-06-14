@@ -595,6 +595,14 @@
                     y += maxHeightInRow + 10;
                 });
             }
+
+            if (y > pageHeight - 25 - (lineHeight * 4)) { // 4 lines of content
+                addFooter();
+                pdf.addPage();
+                y = 20;
+                pdf.addImage(logoUrl, 'PNG', 0, 0, 210, 24);
+                y += 24;
+            }
             y += lineHeight * 2;
             pdf.setDrawColor(200, 200, 200); // Light gray color for the line
             pdf.setLineWidth(0.5); // Line thickness
