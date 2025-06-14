@@ -219,7 +219,10 @@
         <label for="description">Event Description:</label>
         <textarea id="description" rows="5" required></textarea>
 
-        <label for="speaker">Speaker(s):</label>
+        <label for="target">Target Audience:</label>
+        <textarea id="target" rows="2"></textarea>
+
+        <label for="speaker">Speaker(s) Details:</label>
         <textarea id="speaker" rows="2"></textarea>
 
         <label for="participants">Number of Participants:</label>
@@ -230,6 +233,12 @@
 
         <label for="feedback">Participant Feedback Summary:</label>
         <textarea id="feedback" rows="4"></textarea>
+
+        <label for="finance">Financial Summary</label>
+        <textarea id="finance" rows="2"></textarea>
+
+        <label for="ack">Acknowledgements</label>
+        <textarea id="ack" rows="2"></textarea>
 
         <label for="additional">Additional Information (If Any):</label>
         <textarea id="additional" rows="4"></textarea>
@@ -335,10 +344,13 @@
             const venue = document.getElementById('venue').value;
             const organisers = document.getElementById('organisers').value;
             const description = document.getElementById('description').value;
+            const target = document.getElementById('target').value;
             const speaker = document.getElementById('speaker').value;
             const participants = document.getElementById('participants').value;
             const outcomes = document.getElementById('outcomes').value;
             const feedback = document.getElementById('feedback').value;
+            const finance = document.getElementById('finance').value;
+            const ack = document.getElementById('ack').value;
             const additional = document.getElementById('additional').value;
             const photos = document.getElementById('photos').value;
             const reportMakerName = document.getElementById('reportMakerName').value;
@@ -396,7 +408,11 @@
                     <p>${description}</p>
                 </div>
                 <div class="report-section">
-                    <div class="section-title">Speaker(s):</div>
+                    <div class="section-title">Target Audience:</div>
+                    <p>${target}</p>
+                </div>
+                <div class="report-section">
+                    <div class="section-title">Speaker(s) Details:</div>
                     <p>${speaker || 'N/A'}</p>
                 </div>
                 <div class="report-section">
@@ -410,6 +426,14 @@
                 <div class="report-section">
                     <div class="section-title">Participant Feedback Summary:</div>
                     <p>${feedback || 'N/A'}</p>
+                </div>
+                <div class="report-section">
+                    <div class="section-title">Financial Summary:</div>
+                    <p>${finance || 'N/A'}</p>
+                </div>
+                <div class="report-section">
+                    <div class="section-title">Acknowledgements:</div>
+                    <p>${ack || 'N/A'}</p>
                 </div>
                 <div class="report-section">
                     <div class="section-title">Additional Information (If Any):</div>
