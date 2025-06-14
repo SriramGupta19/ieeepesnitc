@@ -272,15 +272,15 @@
         <textarea id="finance" rows="2" placeholder="Mention about the income and expenditure details (If Any)" required></textarea>
 
         <label for="ack">Acknowledgements:</label>
-        <textarea id="ack" rows="2"></textarea>
+        <textarea id="ack" rows="2" placeholder="e.g., Details of volunteers involved" required></textarea>
 
         <label for="additional">Additional Information (If Any):</label>
         <textarea id="additional" rows="4"></textarea>
 
-        <label for="photos">Google Drive Link (Photos, etc.):</label>
+        <label for="photos">Drive Link (Photos, etc.):</label>
         <input type="url" id="photos">
 
-        <label for="eventImages">Event Images (Upload multiple images):</label>
+        <label for="eventImages">Event Media (You can upload multiple images):</label>
         <input type="file" id="eventImages" accept="image/*" multiple>
         <div id="imagePreview"></div>
 
@@ -293,6 +293,7 @@
                 <label for="reportMakerDesignation">Designation:</label>
                 <select id="reportMakerDesignation" required>
                     <option value="">Select</option>
+                    <option value="Advisor">Advisor</option>
                     <option value="Chairperson">Chair</option>
                     <option value="Vice Chairperson">Vice Chair</option>
                     <option value="Secretary">Secretary</option>
@@ -309,7 +310,7 @@
 
         <button type="button" onclick="generateReport()">Generate Report</button>
         <button type="button" onclick="downloadPDF()">Download PDF</button>
-        <div style="margin-top: 10px; font-size: 14px; color: #ff0202; font-style: italic;">
+        <div style="margin-top: 10px; font-size: 14px; color: #ff0202; font-style: normal;">
             Note: First click "Generate Report" to preview, then click "Download PDF"
         </div>
     </form>
