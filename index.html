@@ -228,6 +228,12 @@
         <label for="outcomes">Key Outcomes / Highlights:</label>
         <textarea id="outcomes" rows="4"></textarea>
 
+        <label for="feedback">Participant Feedback Summary:</label>
+        <textarea id="feedback" rows="4"></textarea>
+
+        <label for="additional">Additional Information (If Any):</label>
+        <textarea id="additional" rows="4"></textarea>
+
         <label for="photos">Google Drive Link (Photos, etc.):</label>
         <input type="url" id="photos">
 
@@ -332,6 +338,8 @@
             const speaker = document.getElementById('speaker').value;
             const participants = document.getElementById('participants').value;
             const outcomes = document.getElementById('outcomes').value;
+            const feedback = document.getElementById('feedback').value;
+            const additional = document.getElementById('additional').value;
             const photos = document.getElementById('photos').value;
             const reportMakerName = document.getElementById('reportMakerName').value;
             const reportMakerDesignation = document.getElementById('reportMakerDesignation').value;
@@ -398,6 +406,14 @@
                 <div class="report-section">
                     <div class="section-title">Key Outcomes / Highlights:</div>
                     <p>${outcomes || 'N/A'}</p>
+                </div>
+                <div class="report-section">
+                    <div class="section-title">Participant Feedback Summary:</div>
+                    <p>${feedback || 'N/A'}</p>
+                </div>
+                <div class="report-section">
+                    <div class="section-title">Additional Information (If Any):</div>
+                    <p>${additional || 'N/A'}</p>
                 </div>
                 <div class="report-section">
                     <div class="section-title">Google Drive Link (Photos, etc.):</div>
