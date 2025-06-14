@@ -515,7 +515,7 @@
                 pdf.setFontSize(10);
                 pdf.setFont('helvetica', 'italic');
                 pdf.setTextColor(102, 102, 102);
-                pdf.text("IEEE Power & Energy Society, Student Branch Chapter, NIT Calicut", 
+                pdf.text("IEEE Power & Energy Society Student Branch Chapter, NIT Calicut", 
                         pageWidth / 2, pageHeight - 10, 
                         { align: 'center' });
                 // Reset all text properties after footer
@@ -588,7 +588,7 @@
                     
                     // Add each line with page break check
                     lines.forEach(line => {
-                        if (y > pageHeight - 25) {
+                        if (y > pageHeight - 30) {
                             addFooter();
                             pdf.addPage();
                             y = 20;
