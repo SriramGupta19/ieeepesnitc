@@ -426,7 +426,7 @@
                     <p>${title}</p>
                 </div>
                 <div class="report-section">
-                    <div class="section-title">Event Date:</div>
+                    <div class="section-title">Event Date(s):</div>
                     <p>${date}</p>
                 </div>
                 <div class="report-section">
@@ -443,7 +443,7 @@
                 </div>
                 <div class="report-section">
                     <div class="section-title">Target Audience:</div>
-                    <p>${target}</p>
+                    <p>${target || 'N/A'}</p>
                 </div>
                 <div class="report-section">
                     <div class="section-title">Speaker(s) Details:</div>
@@ -451,7 +451,7 @@
                 </div>
                 <div class="report-section">
                     <div class="section-title">Number of Participants:</div>
-                    <p>${participants}</p>
+                    <p>${participants || 'N/A'}</p>
                 </div>
                 <div class="report-section">
                     <div class="section-title">Key Outcomes / Highlights:</div>
@@ -481,11 +481,10 @@
                 <hr>
                 <div class="report-signature">
                     <p>Report prepared by:</p>
-                    <p><strong>${reportMakerName}</strong></p>
-                    <p>${reportMakerDesignation}</p>
+                    <p><strong>${reportMakerName}</strong>,${reportMakerDesignation}</p>
                     <p>IEEE PES SBC NITC</p>
                 </div>
-                <p style="text-align:center; font-style: italic; color: #666;">IEEE Power & Energy Society, Student Branch Chapter, NIT Calicut</p>
+                <p style="text-align:center; font-style: italic; color: #666;">IEEE Power & Energy Society Student Branch Chapter, NIT Calicut</p>
             `;
 
             document.getElementById('report').innerHTML = generatedHTML;
