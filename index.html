@@ -176,6 +176,33 @@
         <img src="logo3.png" alt="IEEE PES SBC Logo" width="710" height="24">
     </div>
     <h1>IEEE PES SBC NITC Event Report Generator</h1>
+    <div class="quick-guide">
+      <details>
+        <summary><strong>How to use this generator</strong> (Click to expand)</summary>
+        <ol>
+          <li>Fill all required fields (marked with *)</li>
+          <li>Upload event photos (max 6 recommended)</li>
+          <li>Click <em>"Generate Report"</em> to preview</li>
+          <li>Download PDF when satisfied</li>
+        </ol>
+        <p><strong>Pro Tip:</strong> Save your data by copying it before downloading!</p>
+      </details>
+    </style>
+    
+    <style>
+      details {
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        margin: 10px auto;
+        max-width: 800px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+      details[open] {
+        border-left: 3px solid #00629B;
+      }
+    </style>
+        
     <form id="reportForm">
         <label for="year">Year:</label>
         <select id="year" required>
@@ -220,10 +247,10 @@
         <textarea id="description" rows="5" required></textarea>
 
         <label for="target">Target Audience:</label>
-        <textarea id="target" rows="2"></textarea>
+        <textarea type="text" id="target" required></textarea>
 
         <label for="speaker">Speaker(s) Details:</label>
-        <textarea id="speaker" rows="2"></textarea>
+        <textarea id="speaker" rows="4"></textarea>
 
         <label for="participants">Number of Participants:</label>
         <input type="text" id="participants" required>
