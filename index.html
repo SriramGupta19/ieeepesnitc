@@ -540,7 +540,7 @@
             const imagesSection = document.querySelector('.report-section .image-row');
             if (imagesSection) {
                 const imageRows = document.querySelectorAll('.image-row');
-                const availableWidth = (pageWidth - 2*margin - 10) / 2; // 10 for gap between images
+                const availableWidth = (pageWidth - 2*margin - 10-5) / 2; // 10 for gap between images
                                 
                 // Check if we need a new page before adding the images section title
                 if (y > pageHeight - 25 - 50) { // 50 is estimated space for at least one image row
