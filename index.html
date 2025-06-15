@@ -485,7 +485,7 @@
                     <p><strong>${reportMakerName}</strong>,${reportMakerDesignation}</p>
                     <p>IEEE PES SBC NITC</p>
                 </div>
-                <p style="text-align:right; font-style: italic; color: #666;">IEEE Power & Energy Society Student Branch Chapter, NIT Calicut</p>
+                <p style="text-align:center; font-style: italic; color: #666;">IEEE Power & Energy Society Student Branch Chapter, NIT Calicut</p>
             `;
 
             document.getElementById('report').innerHTML = generatedHTML;
@@ -518,7 +518,7 @@
                 pdf.setTextColor(102, 102, 102);
                 pdf.text("IEEE Power & Energy Society Student Branch Chapter, NIT Calicut", 
                         pageWidth / 2, pageHeight - 10, 
-                        { align: 'right' });
+                        { align: 'center' });
                 // Reset all text properties after footer
                 pdf.setFontSize(11);
                 pdf.setFont('helvetica', 'normal');
