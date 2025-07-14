@@ -136,11 +136,25 @@
             font-style: italic;
             color: #333;
         }
-        #imagePreview {
+        .image-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .image-wrapper {
+            width: 48%;
+            text-align: center;
+        }
+        /* New styles for enhanced image upload */
+        .image-preview-container {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-top: 10px;
+            min-height: 50px;
+            padding: 10px;
+            border: 1px dashed #ccc;
+            border-radius: 6px;
         }
         .preview-image {
             width: 150px;
@@ -148,6 +162,7 @@
             object-fit: cover;
             border: 1px solid #ddd;
             border-radius: 4px;
+            cursor: move;
         }
         .image-container {
             position: relative;
@@ -166,14 +181,25 @@
             font-size: 12px;
             cursor: pointer;
         }
-        .image-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
+        .image-container.dragging {
+            opacity: 0.5;
         }
-        .image-wrapper {
-            width: 48%;
-            text-align: center;
+        .clear-images-btn {
+            background-color: #ff4444;
+        }
+        .clear-images-btn:hover {
+            background-color: #cc0000;
+        }
+        details {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px auto;
+            max-width: 800px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        details[open] {
+            border-left: 3px solid #00629B;
         }
     </style>
 </head>
@@ -194,22 +220,8 @@
         </ol>
         <p><strong>Pro Tip:</strong> Do not refresh while filling the data, to avoid losing it!</p>
       </details>
-    </style>
-    
-    <style>
-      details {
-        background: white;
-        padding: 12px;
-        border-radius: 8px;
-        margin: 10px auto;
-        max-width: 800px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      }
-      details[open] {
-        border-left: 3px solid #00629B;
-      }
-    </style>
-        
+    </div>
+
     <form id="reportForm">
         <label for="year">Year:</label>
         <select id="year" required>
@@ -280,9 +292,13 @@
         <label for="photos">Drive Link (Photos, etc.):</label>
         <input type="url" id="photos">
 
-        <label for="eventImages">Event Media (You can upload multiple images):</label>
-        <input type="file" id="eventImages" accept="image/*" multiple>
-        <div id="imagePreview"></div>
+        <label for="eventImages">Event Media:</label>
+        <div style="margin-bottom: 10px;">
+            <button type="button" onclick="document.getElementById('eventImages').click()" style="margin-right: 10px;">Add Images</button>
+            <button type="button" onclick="clearAllImages()" class="clear-images-btn">Clear All</button>
+        </div>
+        <input type="file" id="eventImages" accept="image/*" multiple style="display: none;">
+        <div id="imagePreview" class="image-preview-container"></div>
 
         <div class="report-maker-container">
             <div class="report-maker-name">
@@ -321,13 +337,12 @@
         const { jsPDF } = window.jspdf;
         let generatedHTML = '';
         let uploadedImages = [];
+        let draggedItem = null;
 
         // Handle image upload and preview
         document.getElementById('eventImages').addEventListener('change', function(event) {
             const files = event.target.files;
             const previewContainer = document.getElementById('imagePreview');
-            previewContainer.innerHTML = '';
-            uploadedImages = [];
             
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
@@ -335,40 +350,97 @@
                     const reader = new FileReader();
                     
                     reader.onload = function(e) {
-                        const imageContainer = document.createElement('div');
-                        imageContainer.className = 'image-container';
-                        
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'preview-image';
-                        
-                        const removeBtn = document.createElement('button');
-                        removeBtn.className = 'remove-image';
-                        removeBtn.innerHTML = '×';
-                        removeBtn.onclick = function() {
-                            imageContainer.remove();
-                            // Remove from uploadedImages array
-                            const index = uploadedImages.findIndex(item => item.src === e.target.result);
-                            if (index !== -1) {
-                                uploadedImages.splice(index, 1);
-                            }
-                        };
-                        
-                        imageContainer.appendChild(img);
-                        imageContainer.appendChild(removeBtn);
-                        previewContainer.appendChild(imageContainer);
-                        
-                        // Store the image data for PDF generation
-                        uploadedImages.push({
-                            src: e.target.result,
-                            file: file
-                        });
+                        addImageToPreview(e.target.result, file);
                     };
                     
                     reader.readAsDataURL(file);
                 }
             }
+            
+            // Reset the input to allow selecting the same files again
+            event.target.value = '';
         });
+
+        function addImageToPreview(src, file) {
+            const previewContainer = document.getElementById('imagePreview');
+            
+            const imageContainer = document.createElement('div');
+            imageContainer.className = 'image-container';
+            imageContainer.draggable = true;
+            
+            const img = document.createElement('img');
+            img.src = src;
+            img.className = 'preview-image';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-image';
+            removeBtn.innerHTML = '×';
+            removeBtn.onclick = function() {
+                imageContainer.remove();
+                // Remove from uploadedImages array
+                const index = uploadedImages.findIndex(item => item.src === src);
+                if (index !== -1) {
+                    uploadedImages.splice(index, 1);
+                }
+            };
+            
+            // Drag and drop events
+            imageContainer.addEventListener('dragstart', function(e) {
+                draggedItem = this;
+                this.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/html', this.innerHTML);
+            });
+            
+            imageContainer.addEventListener('dragend', function() {
+                this.classList.remove('dragging');
+            });
+            
+            imageContainer.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+            });
+            
+            imageContainer.addEventListener('drop', function(e) {
+                e.preventDefault();
+                if (draggedItem !== this) {
+                    const previewContainer = document.getElementById('imagePreview');
+                    const items = Array.from(previewContainer.children);
+                    const draggedIndex = items.indexOf(draggedItem);
+                    const targetIndex = items.indexOf(this);
+                    
+                    if (draggedIndex !== -1 && targetIndex !== -1) {
+                        // Swap in DOM
+                        if (draggedIndex < targetIndex) {
+                            this.after(draggedItem);
+                        } else {
+                            this.before(draggedItem);
+                        }
+                        
+                        // Swap in uploadedImages array
+                        const temp = uploadedImages[draggedIndex];
+                        uploadedImages[draggedIndex] = uploadedImages[targetIndex];
+                        uploadedImages[targetIndex] = temp;
+                    }
+                }
+            });
+            
+            imageContainer.appendChild(img);
+            imageContainer.appendChild(removeBtn);
+            previewContainer.appendChild(imageContainer);
+            
+            // Store the image data for PDF generation
+            uploadedImages.push({
+                src: src,
+                file: file
+            });
+        }
+
+        function clearAllImages() {
+            const previewContainer = document.getElementById('imagePreview');
+            previewContainer.innerHTML = '';
+            uploadedImages = [];
+        }
 
         function generateReport() {
             const year = document.getElementById('year').value;
@@ -482,7 +554,7 @@
                 <hr>
                 <div class="report-signature">
                     <p>Report prepared by:</p>
-                    <p><strong>${reportMakerName}</strong>,${reportMakerDesignation}</p>
+                    <p><strong>${reportMakerName}</strong>, ${reportMakerDesignation}</p>
                     <p>IEEE PES SBC NITC</p>
                 </div>
                 <p style="text-align:center; font-style: italic; color: #666;">IEEE Power & Energy Society Student Branch Chapter, NIT Calicut</p>
